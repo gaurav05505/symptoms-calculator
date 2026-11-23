@@ -361,9 +361,9 @@
     </footer>
 
     <script>
-        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
-            ? (window.location.port ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}` : 'http://localhost:3005')
-            : 'https://symptoms-calculator.onrender.com';
+        const API_BASE_URL = window.location.protocol.startsWith('http')
+            ? window.location.origin
+            : 'http://localhost:3005';
 
         function setMode(mode) {
             const tabL = document.getElementById('tab-login');

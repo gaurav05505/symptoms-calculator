@@ -89,7 +89,7 @@ app.post('/login', (req, res) => {
 
 // Function to start server with automatic port retry if port is busy
 function startServer(port) {
-    const server = app.listen(port, () => {
+    const server = app.listen(port, '0.0.0.0', () => {
         console.log(`\n=========================================`);
         console.log(`SERVER IS ALIVE AND RUNNING ON PORT ${port}`);
         console.log(`Open in your browser: http://localhost:${port}`);
