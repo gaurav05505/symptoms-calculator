@@ -1,519 +1,588 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Dashboard</title>
-    <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Poppins,sans-serif;
-scroll-behavior:smooth;
-}
-
-
-/* BACKGROUND */
-
-body{
-
-background:white;
-color:#0f172a;
-overflow-x:hidden;
-
-}
-
-
-/* PARTICLES */
-
-canvas{
-
-position:fixed;
-top:0;
-left:0;
-z-index:-1;
-
-}
-
-
-/* NAVBAR */
-
-.navbar{
-
-position:fixed;
-top:0;
-width:100%;
-
-display:flex;
-justify-content:space-between;
-align-items:center;
-
-padding:15px 40px;
-
-background:#020617;
-
-box-shadow:
-0 0 10px #00aaff,
-0 0 25px #007bff;
-
-z-index:1000;
-
-}
-
-
-.logo{
-
-color:white;
-font-weight:600;
-font-size:20px;
-
-text-shadow:
-0 0 10px #00c3ff,
-0 0 20px #007bff;
-
-}
-
-
-.nav-links a{
-
-margin-left:20px;
-text-decoration:none;
-color:white;
-
-position:relative;
-
-}
-
-
-.nav-links a::after{
-
-content:'';
-position:absolute;
-left:0;
-bottom:-5px;
-width:0%;
-height:2px;
-
-background:#00c3ff;
-
-transition:0.3s;
-
-}
-
-
-.nav-links a:hover::after{
-
-width:100%;
-
-}
-
-
-
-/* MAIN */
-
-.main{
-
-height:100vh;
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-}
-
-
-/* CARD */
-
-.dashboard-container{
-
-width:400px;
-padding:45px;
-
-background:rgba(255,255,255,0.6);
-
-border-radius:18px;
-
-backdrop-filter: blur(15px);
-
-border:1px solid rgba(0,170,255,0.3);
-
-box-shadow:
-
-0 10px 30px rgba(0,120,255,0.2);
-
-text-align:center;
-
-animation:fadeUp 1s ease;
-
-}
-
-
-/* TEXT */
-
-h1{
-
-margin-bottom:10px;
-
-color:#020617;
-
-}
-
-
-p{
-
-margin-bottom:25px;
-opacity:0.7;
-
-}
-
-
-
-/* BUTTON */
-
-.logout-btn{
-
-padding:12px 30px;
-
-border:none;
-border-radius:8px;
-
-font-size:15px;
-
-color:white;
-
-background:#007bff;
-
-box-shadow:
-
-0 0 12px #007bff;
-
-cursor:pointer;
-
-transition:0.3s;
-
-}
-
-
-.logout-btn:hover{
-
-transform:translateY(-3px);
-
-box-shadow:
-
-0 0 20px #007bff,
-0 0 40px #00c3ff;
-
-}
-
-
-
-/* FLOATING GRAPHICS */
-
-.shape{
-
-position:absolute;
-border-radius:50%;
-opacity:0.4;
-filter:blur(35px);
-
-animation:float 6s infinite ease-in-out;
-
-}
-
-
-.s1{
-
-width:160px;
-height:160px;
-
-background:#00aaff;
-
-top:20%;
-left:10%;
-
-}
-
-
-.s2{
-
-width:140px;
-height:140px;
-
-background:#007bff;
-
-bottom:15%;
-right:15%;
-
-animation-delay:2s;
-
-}
-
-
-@keyframes float{
-
-0%{transform:translateY(0)}
-50%{transform:translateY(-35px)}
-100%{transform:translateY(0)}
-
-}
-
-
-
-/* SCROLL ANIMATION */
-
-.reveal{
-
-opacity:0;
-transform:translateY(40px);
-transition:0.8s;
-
-}
-
-.reveal.active{
-
-opacity:1;
-transform:translateY(0);
-
-}
-
-
-
-/* ENTRY */
-
-@keyframes fadeUp{
-
-from{
-
-opacity:0;
-transform:translateY(40px);
-
-}
-
-to{
-
-opacity:1;
-transform:translateY(0);
-
-}
-
-}
-
-
-
-@media(max-width:500px){
-
-.dashboard-container{
-
-width:90%;
-
-}
-
-.navbar{
-
-padding:15px;
-
-}
-
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard | MediCalc AI</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: #0284c7;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            color: #0369a1;
+        }
+
+        /* --- NAVBAR --- */
+        .site-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #0f172a;
+            text-decoration: none;
+        }
+
+        .brand-icon-box {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: #0284c7;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-logo span {
+            color: #0284c7;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #0284c7;
+            background: #f0f9ff;
+        }
+
+        .mobile-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            font-size: 1.2rem;
+            color: #0f172a;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- DASHBOARD WRAPPER --- */
+        .main-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem 1rem;
+        }
+
+        .dash-hero {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .welcome-title {
+            font-size: clamp(1.4rem, 3vw, 1.85rem);
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .welcome-sub {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .btn-signout {
+            padding: 7px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-signout:hover {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fca5a5;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #f0f9ff;
+            color: #0284c7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-num {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.1;
+        }
+
+        .stat-lbl {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Tools */
+        .section-heading {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 1rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .tool-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+        }
+
+        .tool-card:hover {
+            border-color: #0284c7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .tool-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-desc {
+            font-size: 0.88rem;
+            color: #64748b;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+
+        .btn-primary {
+            background: #0284c7;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #0369a1;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #0284c7;
+            color: #0284c7;
+        }
+
+        /* Tips */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+
+        .tip-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid #0d9488;
+        }
+
+        .tip-card h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .tip-card p {
+            font-size: 0.85rem;
+            color: #64748b;
+            line-height: 1.45;
+        }
+
+        /* --- FOOTER --- */
+        .site-footer {
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.5rem 1rem;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: auto;
+        }
+
+        .footer-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-btn { display: flex; }
+            .nav-menu {
+                position: fixed;
+                top: 64px; left: 0; right: 0;
+                background: #ffffff;
+                border-bottom: 1px solid #e2e8f0;
+                flex-direction: column;
+                padding: 1rem; gap: 6px;
+                display: none;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            }
+            .nav-menu.open { display: flex; }
+            .nav-link { width: 100%; padding: 10px 12px; }
+            .footer-inner { flex-direction: column; text-align: center; }
+        }
+    </style>
 </head>
-
-
-
 <body>
 
-
-<!-- PARTICLE CANVAS -->
-
-<canvas id="particles"></canvas>
-
-
-
-<!-- NAVBAR -->
-
-<div class="navbar">
-
-<div class="logo">
-Symptom AI
-</div>
-
-<div class="nav-links">
-
-<a href="#">Home</a>
-<a href="#">Calculator</a>
-<a href="#">Profile</a>
-
-</div>
-
-</div>
-
-
-
-<!-- FLOATING GRAPHICS -->
-
-<div class="shape s1"></div>
-<div class="shape s2"></div>
-
-
-
-<!-- MAIN -->
-
-<div class="main">
-
-<div class="dashboard-container reveal">
-
-<h1 id="welcome-message">
-Loading...
-</h1>
-
-<p>
-Welcome to symptom calculator
-</p>
-
-<button class="logout-btn" id="logout-btn">
-
-Enter
-
-</button>
-
-</div>
-
-</div>
-
-
-
-<script>
-
-
-/* LOGIN CHECK */
-
-window.onload=function(){
-
-const user=sessionStorage.getItem("activeUser");
-
-if(!user){
-
-alert("login first");
-
-window.location.href="index.html";
-
-}
-
-else{
-
-document.getElementById("welcome-message").innerText="Welcome, "+user;
-
-}
-
-};
-
-
-
-/* BUTTON */
-
-document.getElementById("logout-btn").onclick=function(){
-
-sessionStorage.removeItem("activeUser");
-
-window.location.href="index.html";
-
-};
-
-
-
-/* SCROLL REVEAL */
-
-const observer=new IntersectionObserver(entries=>{
-
-entries.forEach(entry=>{
-
-if(entry.isIntersecting){
-
-entry.target.classList.add("active");
-
-}
-
-});
-
-});
-
-document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
-
-
-
-/* PARTICLES */
-
-const canvas=document.getElementById("particles");
-
-const ctx=canvas.getContext("2d");
-
-canvas.width=window.innerWidth;
-
-canvas.height=window.innerHeight;
-
-
-let particles=[];
-
-for(let i=0;i<70;i++){
-
-particles.push({
-
-x:Math.random()*canvas.width,
-
-y:Math.random()*canvas.height,
-
-r:Math.random()*2,
-
-dx:(Math.random()-0.5)*0.5,
-
-dy:(Math.random()-0.5)*0.5
-
-});
-
-}
-
-
-function animate(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-particles.forEach(p=>{
-
-ctx.beginPath();
-
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-
-ctx.fillStyle="#007bff";
-
-ctx.fill();
-
-p.x+=p.dx;
-
-p.y+=p.dy;
-
-});
-
-requestAnimationFrame(animate);
-
-}
-
-animate();
-
-
-</script>
-
-
+    <!-- Unified Clean Navbar -->
+    <header class="site-header">
+        <div class="nav-container">
+            <a href="home.html" class="brand-logo">
+                <div class="brand-icon-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/>
+                        <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/>
+                        <circle cx="20" cy="10" r="2"/>
+                    </svg>
+                </div>
+                <div>MediCalc <span>AI</span></div>
+            </a>
+
+            <nav>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="home.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html" class="nav-link">Symptoms Checker</a></li>
+                    <li><a href="bmi.html" class="nav-link">BMI Calculator</a></li>
+                    <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+                </ul>
+            </nav>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button onclick="handleLogout()" class="btn-signout">Sign Out</button>
+                <button class="mobile-btn" id="mobile-toggle" aria-label="Toggle navigation">Menu</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        
+        <!-- Welcome Hero -->
+        <div class="dash-hero">
+            <div>
+                <h1 class="welcome-title" id="welcome-heading">Hello, Patient</h1>
+                <p class="welcome-sub">Access your personal health and clinical analysis utilities.</p>
+            </div>
+            <div>
+                <button onclick="handleLogout()" class="btn-signout">
+                    Sign Out
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-num">75+</div>
+                    <div class="stat-lbl">Symptoms Mapped</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-num">WHO Metric</div>
+                    <div class="stat-lbl">BMI Standards</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-num">Active</div>
+                    <div class="stat-lbl">Encrypted Session</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Primary Tools -->
+        <h2 class="section-heading">Clinical Utilities</h2>
+
+        <div class="tools-grid">
+            
+            <div class="tool-card">
+                <div class="tool-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                    <span>Symptoms Checker</span>
+                </div>
+                <p class="tool-desc">
+                    Identify your symptoms across respiratory, digestive, and musculoskeletal categories with instant OTC suggestions and dietary advice.
+                </p>
+                <a href="index.html" class="btn btn-primary" style="margin-top: auto;">
+                    Open Symptom Checker &rarr;
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                    </svg>
+                    <span>BMI Calculator</span>
+                </div>
+                <p class="tool-desc">
+                    Compute your Body Mass Index with Metric or Imperial units and check your placement on the visual spectrum gauge.
+                </p>
+                <a href="bmi.html" class="btn btn-primary" style="margin-top: auto;">
+                    Calculate BMI &rarr;
+                </a>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                    </svg>
+                    <span>Patient Age Calculator</span>
+                </div>
+                <p class="tool-desc">
+                    Calculate exact patient age down to years, months, and days with a milestone countdown to their next birthday.
+                </p>
+                <a href="index.html" class="btn btn-secondary" style="margin-top: auto;">
+                    Calculate Age &rarr;
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Health Guidelines -->
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <h3 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">
+                Preventive Health Reminders
+            </h3>
+            
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h4>Daily Hydration</h4>
+                    <p>Drink 2.5 to 3 liters of water daily to maintain kidney function and healthy metabolic balance.</p>
+                </div>
+                <div class="tip-card">
+                    <h4>Consistent Exercise</h4>
+                    <p>Incorporate 30 minutes of walking or light aerobic exercise to boost cardiovascular efficiency.</p>
+                </div>
+                <div class="tip-card">
+                    <h4>Restful Sleep</h4>
+                    <p>Prioritize 7 to 8 hours of uninterrupted sleep to support immune regulation and mental clarity.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>
+                <strong>MediCalc AI</strong> &copy; 2026 • Patient Dashboard
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="home.html">Home</a>
+                <a href="index.html">Symptoms</a>
+                <a href="bmi.html">BMI</a>
+                <a href="dashboard.html">Dashboard</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Toggle
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        if (mobileToggle && navMenu) {
+            mobileToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navMenu.classList.toggle('open');
+                mobileToggle.innerText = navMenu.classList.contains('open') ? 'Close' : 'Menu';
+            });
+            document.addEventListener('click', (e) => {
+                if (!navMenu.contains(e.target) && !mobileToggle.contains(e.target)) {
+                    navMenu.classList.remove('open');
+                    mobileToggle.innerText = 'Menu';
+                }
+            });
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem("activeUser");
+            alert("Signed out successfully.");
+            window.location.href = "sample.html";
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const user = sessionStorage.getItem("activeUser");
+            const heading = document.getElementById("welcome-heading");
+
+            if (user) {
+                const hour = new Date().getHours();
+                let timeGreeting = "Good day";
+                if (hour < 12) timeGreeting = "Good morning";
+                else if (hour < 18) timeGreeting = "Good afternoon";
+                else timeGreeting = "Good evening";
+
+                heading.innerText = `${timeGreeting}, ${user}`;
+            } else {
+                heading.innerText = "Welcome, Patient";
+            }
+        });
+    </script>
 </body>
-
 </html>

@@ -3,493 +3,969 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Symptoms Calculator</title>
-    <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
-
+    <title>Symptom Checker & Health Evaluation | MediCalc AI</title>
     <style>
-        /* --- GLOBAL & VARIABLES --- */
-        :root {
-            --primary-color: #0ea5e9;
-            --primary-hover: #0284c7;
-            --secondary-color: #38bdf8;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            
-            /* Age Calc Variables */
-            --glass-bg: rgba(255, 255, 255, 0.9);
-            --glass-border: rgba(0, 0, 0, 0.1);
-        }
-
-        * {
+        /* ============================================================
+           SELF-CONTAINED CLEAN LIGHT DESIGN SYSTEM (ZERO DEPENDENCIES)
+           ============================================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            /* Removed overflow: hidden so the page can scroll! */
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- NAVBAR CSS --- */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 40px;
-            background: #1e293b; /* Dark slate to match medical blue */
-            color: white;
+        a {
+            color: #0284c7;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            color: #0369a1;
+        }
+
+        /* --- NAVBAR --- */
+        .site-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
             position: sticky;
             top: 0;
             z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
 
-        .nav-logo {
-            font-size: 22px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .nav-links {
-            list-style: none;
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 64px;
             display: flex;
-        }
-
-        .nav-links li {
-            position: relative;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: white;
-            padding: 10px 15px;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .nav-links a:hover {
-            background: var(--primary-color);
-            border-radius: 4px;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            background: #334155;
-            top: 40px;
-            min-width: 150px;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .dropdown:hover .dropdown-menu {
-            display: block;
-        }
-
-        .menu-toggle {
-            display: none;
-            font-size: 26px;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                background: #1e293b;
-                position: absolute;
-                top: 60px;
-                left: 0;
-            }
-            .nav-links li {
-                text-align: center;
-            }
-            .menu-toggle {
-                display: block;
-            }
-            .nav-links.active {
-                display: flex;
-            }
-            .dropdown-menu {
-                position: static;
-                background: #0f172a;
-            }
-        }
-
-        /* --- APP LAYOUT --- */
-        .main-wrapper {
-            display: flex;
-            justify-content: center;
-            padding: 30px 20px;
-        }
-
-        .app-container {
-            max-width: 800px;
-            width: 100%;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        h1.app-title {
-            margin: 0;
-            font-size: 2.2rem;
-            color: var(--text-main);
-        }
-
-        .subtitle {
-            color: var(--text-muted);
-            margin-top: 5px;
-            font-size: 1.1rem;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            margin-bottom: 24px;
-            border: 1px solid var(--border-color);
-        }
-
-        .card h2 {
-            margin-top: 0;
-            font-size: 1.3rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-        }
-
-        /* --- AGE CALCULATOR CSS --- */
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        input[type="date"] {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            background: #f1f5f9;
-            color: var(--text-main);
-            font-size: 16px;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        input[type="date"]:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
-        }
-
-        .age-btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .age-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(14, 165, 233, 0.3);
-        }
-
-        .result-box {
-            display: flex;
+            align-items: center;
             justify-content: space-between;
-            margin-top: 25px;
-            gap: 15px;
         }
 
-        .result-card {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            padding: 15px 10px;
-            border-radius: 12px;
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #0f172a;
+            text-decoration: none;
+        }
+
+        .brand-icon-box {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: #0284c7;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-logo span {
+            color: #0284c7;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #0284c7;
+            background: #f0f9ff;
+        }
+
+        .btn-auth-nav {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            background: #0284c7;
+            color: #ffffff !important;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2);
+            transition: all 0.2s;
+        }
+
+        .btn-auth-nav:hover {
+            background: #0369a1;
+            transform: translateY(-1px);
+        }
+
+        .mobile-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            font-size: 1.2rem;
+            color: #0f172a;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- MAIN WRAPPER --- */
+        .main-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem 1rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: clamp(1.6rem, 3.5vw, 2.25rem);
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            font-size: 0.95rem;
+            color: #64748b;
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        /* --- CARDS --- */
+        .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 0.85rem;
+            margin-bottom: 1.25rem;
+            border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: inherit;
+            font-size: 0.92rem;
+            font-weight: 700;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: #0369a1;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+            color: #0284c7;
+            border-color: #0284c7;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* --- AGE CALCULATOR --- */
+        .age-form {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
             flex: 1;
+            min-width: 220px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.92rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px #e0f2fe;
+        }
+
+        .age-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 1.25rem;
+        }
+
+        .age-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.85rem 0.5rem;
+            text-align: center;
+        }
+
+        .age-num {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0284c7;
+            line-height: 1.1;
+        }
+
+        .age-lbl {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        /* --- SYMPTOMS TOOLBAR --- */
+        .toolbar {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 1.25rem;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 10px;
         }
 
-        .number {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 5px;
+        .search-wrapper {
+            position: relative;
+            width: 100%;
         }
 
-        .label {
-            font-size: 12px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
+        .search-icon-svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            pointer-events: none;
         }
 
-        /* --- SYMPTOMS GRID CSS --- */
-        .symptom-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 12px;
+        .search-input {
+            width: 100%;
+            padding: 9px 12px 9px 36px;
+            font-size: 0.92rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #0f172a;
+            outline: none;
         }
 
-        .symptom-box {
+        .search-input:focus {
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px #e0f2fe;
+        }
+
+        .presets-wrapper {
             display: flex;
             align-items: center;
-            padding: 12px 16px;
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .preset-chip {
+            flex-shrink: 0;
+            padding: 4px 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #475569;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s;
+        }
+
+        .preset-chip:hover {
+            border-color: #0284c7;
+            color: #0284c7;
+            background: #f0f9ff;
+        }
+
+        .preset-clear-chip {
+            color: #dc2626;
+            border-color: #fca5a5;
+            background: #fef2f2;
+        }
+
+        .preset-clear-chip:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* --- SYMPTOM GRID --- */
+        .category-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .category-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .symptom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+            gap: 8px;
+        }
+
+        .symptom-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 0.88rem;
             font-weight: 500;
+            color: #334155;
             user-select: none;
         }
 
-        .symptom-box:hover {
-            border-color: var(--primary-color);
-            background: #e0f2fe;
+        .symptom-item:hover {
+            border-color: #0284c7;
+            color: #0284c7;
+            background: #f0f9ff;
         }
 
-        .symptom-box input[type="checkbox"] {
-            margin-right: 12px;
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary-color);
+        .symptom-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #0284c7;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
-        .symptom-box:has(input:checked) {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
+        .symptom-item:has(input:checked) {
+            background-color: #0284c7;
+            color: #ffffff;
+            border-color: #0284c7;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25);
         }
 
-        /* --- MAIN SUBMIT BUTTON --- */
-        .calculate-btn {
-            width: 100%;
-            padding: 18px;
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: white;
-            background-color: var(--primary-color);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
-            margin-bottom: 40px;
+        /* --- RESULTS CARD --- */
+        #result-card {
+            display: none;
+            border: 2px solid #0284c7;
+            margin-top: 1.5rem;
         }
 
-        .calculate-btn:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+        .severity-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .sev-low { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
+        .sev-warning { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+        .sev-danger { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+
+        .result-title {
+            font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .meter-track {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin: 6px 0 14px 0;
+        }
+
+        .meter-fill {
+            height: 100%;
+            width: 80%;
+            background: #0284c7;
+            border-radius: 9999px;
+            transition: width 0.5s ease;
+        }
+
+        .guidance-block {
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .guidance-block h4 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .block-med { border-left: 4px solid #0284c7; }
+        .block-med h4 { color: #0284c7; }
+
+        .block-diet { border-left: 4px solid #0d9488; }
+        .block-diet h4 { color: #0d9488; }
+
+        .block-warn { border-left: 4px solid #dc2626; background: #fef2f2; }
+        .block-warn h4 { color: #dc2626; }
+        .block-warn p { color: #0f172a; }
+
+        /* --- FOOTER --- */
+        .site-footer {
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.5rem 1rem;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: auto;
+        }
+
+        .footer-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 768px) {
+            .mobile-btn {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 64px;
+                left: 0;
+                right: 0;
+                background: #ffffff;
+                border-bottom: 1px solid #e2e8f0;
+                flex-direction: column;
+                padding: 1rem;
+                gap: 6px;
+                display: none;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-menu.open {
+                display: flex;
+            }
+
+            .nav-link {
+                width: 100%;
+                padding: 10px 12px;
+            }
+
+            .age-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="nav-logo">kptech medlife</div>
-        <ul class="nav-links">
-            <li><a href="home.html">Home</a></li> 
-            <li><a href="index.html">Dashboard</a></li>
-            <li class="dropdown">
-                <a href="#">Tools ▼</a>
-                <ul class="dropdown-menu">
-                    <li><a href="index.html">Symptoms Checker</a></li>
-                    <li><a href="bmi.html">BMI Calculator</a></li>
+    <!-- Unified Clean Navbar -->
+    <header class="site-header">
+        <div class="nav-container">
+            <a href="home.html" class="brand-logo">
+                <div class="brand-icon-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/>
+                        <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/>
+                        <circle cx="20" cy="10" r="2"/>
+                    </svg>
+                </div>
+                <div>MediCalc <span>AI</span></div>
+            </a>
+
+            <nav>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="home.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html" class="nav-link active">Symptoms Checker</a></li>
+                    <li><a href="bmi.html" class="nav-link">BMI Calculator</a></li>
+                    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
                 </ul>
-            </li>
-            <li><a href="login.html">Logout</a></li>
-        </ul>
-        <div class="menu-toggle" id="mobile-menu">&#9776;</div>
-    </nav>
+            </nav>
 
-    <div class="main-wrapper">
-        <div class="app-container">
-
-            <div class="header">
-                <h1 class="app-title">Symptoms Calculator</h1>
-                <p class="subtitle">Enter your details and select symptoms for analysis.</p>
-            </div>
-
-            <div class="card" id="age-calculator-section">
-                <h2>Patient Age</h2>
-                
-                <div class="input-group">
-                    <label for="date-input">Select Patient Birth Date</label>
-                    <input type="date" id="date-input">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div id="auth-slot">
+                    <a href="sample.html" class="btn-auth-nav">Sign In &rarr;</a>
                 </div>
-
-                <button class="age-btn" id="calculateBtn">Calculate Age</button>
-
-                <div class="result-box">
-                    <div class="result-card">
-                        <span id="years" class="number">--</span>
-                        <span class="label">Years</span>
-                    </div>
-                    <div class="result-card">
-                        <span id="months" class="number">--</span>
-                        <span class="label">Months</span>
-                    </div>
-                    <div class="result-card">
-                        <span id="days" class="number">--</span>
-                        <span class="label">Days</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Select Symptoms</h2>
-                <div class="symptom-container">
-                    <label class="symptom-box"><input type="checkbox" value="fever">Fever</label>
-                    <label class="symptom-box"><input type="checkbox" value="cough">Cough</label>
-                    <label class="symptom-box"><input type="checkbox" value="fatigue">Fatigue</label>
-                    <label class="symptom-box"><input type="checkbox" value="headache">Headache</label>
-                    <label class="symptom-box"><input type="checkbox" value="chills">Chills</label>
-                    <label class="symptom-box"><input type="checkbox" value="sweating">Sweating</label>
-                    <label class="symptom-box"><input type="checkbox" value="weakness">Weakness</label>
-                    <label class="symptom-box"><input type="checkbox" value="dizziness">Dizziness</label>
-                    <label class="symptom-box"><input type="checkbox" value="nausea">Nausea</label>
-                    <label class="symptom-box"><input type="checkbox" value="vomiting">Vomiting</label>
-                    <label class="symptom-box"><input type="checkbox" value="diarrhea">Diarrhea</label>
-                    <label class="symptom-box"><input type="checkbox" value="constipation">Constipation</label>
-                    <label class="symptom-box"><input type="checkbox" value="stomach_pain">Stomach pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="acidity">Acidity</label>
-                    <label class="symptom-box"><input type="checkbox" value="bloating">Bloating</label>
-                    <label class="symptom-box"><input type="checkbox" value="gas">Gas</label>
-                    <label class="symptom-box"><input type="checkbox" value="runny_nose">Runny nose</label>
-                    <label class="symptom-box"><input type="checkbox" value="sore_throat">Sore throat</label>
-                    <label class="symptom-box"><input type="checkbox" value="cold">Cold</label>
-                    <label class="symptom-box"><input type="checkbox" value="flu">Flu</label>
-                    <label class="symptom-box"><input type="checkbox" value="loss_smell">Loss of smell</label>
-                    <label class="symptom-box"><input type="checkbox" value="loss_taste">Loss of taste</label>
-                    <label class="symptom-box"><input type="checkbox" value="chest_pain">Chest pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="breath_shortness">Short breath</label>
-                    <label class="symptom-box"><input type="checkbox" value="palpitations">Palpitations</label>
-                    <label class="symptom-box"><input type="checkbox" value="high_bp">High BP</label>
-                    <label class="symptom-box"><input type="checkbox" value="low_bp">Low BP</label>
-                    <label class="symptom-box"><input type="checkbox" value="joint_pain">Joint pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="muscle_pain">Muscle pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="body_pain">Body pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="back_pain">Back pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="neck_pain">Neck pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="knee_pain">Knee pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="shoulder_pain">Shoulder pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="itching">Itching</label>
-                    <label class="symptom-box"><input type="checkbox" value="rash">Skin rash</label>
-                    <label class="symptom-box"><input type="checkbox" value="dry_skin">Dry skin</label>
-                    <label class="symptom-box"><input type="checkbox" value="hair_loss">Hair loss</label>
-                    <label class="symptom-box"><input type="checkbox" value="blurred_vision">Blurred vision</label>
-                    <label class="symptom-box"><input type="checkbox" value="eye_pain">Eye pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="eye_redness">Eye redness</label>
-                    <label class="symptom-box"><input type="checkbox" value="ear_pain">Ear pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="hearing_loss">Hearing loss</label>
-                    <label class="symptom-box"><input type="checkbox" value="anxiety">Anxiety</label>
-                    <label class="symptom-box"><input type="checkbox" value="depression">Depression</label>
-                    <label class="symptom-box"><input type="checkbox" value="insomnia">Insomnia</label>
-                    <label class="symptom-box"><input type="checkbox" value="stress">Stress</label>
-                    <label class="symptom-box"><input type="checkbox" value="memory_loss">Memory loss</label>
-                    <label class="symptom-box"><input type="checkbox" value="confusion">Confusion</label>
-                    <label class="symptom-box"><input type="checkbox" value="weight_loss">Weight loss</label>
-                    <label class="symptom-box"><input type="checkbox" value="weight_gain">Weight gain</label>
-                    <label class="symptom-box"><input type="checkbox" value="frequent_urination">Frequent urination</label>
-                    <label class="symptom-box"><input type="checkbox" value="burning_urination">Burning urination</label>
-                    <label class="symptom-box"><input type="checkbox" value="pelvic_pain">Pelvic pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="swelling">Swelling</label>
-                    <label class="symptom-box"><input type="checkbox" value="inflammation">Inflammation</label>
-                    <label class="symptom-box"><input type="checkbox" value="dry_mouth">Dry mouth</label>
-                    <label class="symptom-box"><input type="checkbox" value="bad_breath">Bad breath</label>
-                    <label class="symptom-box"><input type="checkbox" value="tooth_pain">Tooth pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="bleeding_gums">Bleeding gums</label>
-                    <label class="symptom-box"><input type="checkbox" value="snoring">Snoring</label>
-                    <label class="symptom-box"><input type="checkbox" value="sleep_apnea">Sleep apnea</label>
-                    <label class="symptom-box"><input type="checkbox" value="tremor">Tremor</label>
-                    <label class="symptom-box"><input type="checkbox" value="numbness">Numbness</label>
-                    <label class="symptom-box"><input type="checkbox" value="tingling">Tingling</label>
-                    <label class="symptom-box"><input type="checkbox" value="paralysis">Paralysis</label>
-                    <label class="symptom-box"><input type="checkbox" value="loss_balance">Loss of balance</label>
-                    <label class="symptom-box"><input type="checkbox" value="hallucination">Hallucination</label>
-                    <label class="symptom-box"><input type="checkbox" value="panic_attack">Panic attack</label>
-                    <label class="symptom-box"><input type="checkbox" value="restlessness">Restlessness</label>
-                    <label class="symptom-box"><input type="checkbox" value="excess_sleep">Excess sleep</label>
-                    <label class="symptom-box"><input type="checkbox" value="dehydration">Dehydration</label>
-                    <label class="symptom-box"><input type="checkbox" value="jaundice">Jaundice</label>
-                    <label class="symptom-box"><input type="checkbox" value="liver_pain">Liver pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="kidney_pain">Kidney pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="flank_pain">Flank pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="groin_pain">Groin pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="breast_pain">Breast pain</label>
-                    <label class="symptom-box"><input type="checkbox" value="menstrual_irregularity">Menstrual irregularity</label>
-                    <label class="symptom-box"><input type="checkbox" value="heavy_bleeding">Heavy bleeding</label>
-                </div>
-            </div>
-
-           <button class="calculate-btn" onclick="calculateDisease()">Analyze Symptoms & Predict Disease</button>
-
-            <div id="result-card" class="card" style="display: none; text-align: center; margin-top: 20px; border: 2px solid var(--primary-color);">
-                <h2>Possible Condition</h2>
-                <h1 id="disease-name" style="font-size: 2.5rem; margin: 15px 0;">--</h1>
-                
-                <div style="background: #e0f2fe; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left;">
-                    <h3 style="color: var(--primary-hover); margin-top: 0; font-size: 1.1rem;">💊 Recommended Action / OTC Relief:</h3>
-                    <p id="medicine-name" style="font-size: 1.05rem; color: var(--text-main); margin-bottom: 0;">--</p>
-                </div>
-
-                <p id="medical-disclaimer" style="color: var(--text-muted); font-size: 0.9rem;">
-                    *Disclaimer: This tool is for educational purposes. These are general OTC suggestions, not a medical prescription. Always consult a doctor.*
-                </p>
+                <button class="mobile-btn" id="mobile-toggle" aria-label="Toggle navigation">Menu</button>
             </div>
         </div>
-    </div>
+    </header>
 
+    <main class="main-wrapper">
+        
+        <div class="page-header">
+            <h1 class="page-title">Symptoms & Health Evaluator</h1>
+            <p class="page-subtitle">Select any symptoms you are experiencing to receive instant algorithmic condition matches and suggested care guidance.</p>
+        </div>
+
+        <!-- 1. Patient Age Calculator -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    <span>Patient Age Calculator</span>
+                </h2>
+                <span style="font-size: 0.82rem; color: #64748b;">Optional Metric</span>
+            </div>
+
+            <div class="age-form">
+                <div class="form-group">
+                    <label class="form-label" for="date-input">Select Patient Date of Birth</label>
+                    <input type="date" id="date-input" class="form-control">
+                </div>
+                <button class="btn btn-secondary" id="calcAgeBtn">
+                    Calculate Age
+                </button>
+            </div>
+
+            <div class="age-grid">
+                <div class="age-box">
+                    <div id="years" class="age-num">--</div>
+                    <div class="age-lbl">Years Old</div>
+                </div>
+                <div class="age-box">
+                    <div id="months" class="age-num">--</div>
+                    <div class="age-lbl">Months</div>
+                </div>
+                <div class="age-box">
+                    <div id="days" class="age-num">--</div>
+                    <div class="age-lbl">Days</div>
+                </div>
+                <div class="age-box">
+                    <div id="next-birthday" class="age-num" style="font-size: 1.35rem; padding-top: 4px;">--</div>
+                    <div class="age-lbl">Days to Birthday</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Symptoms Selector Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                    <span>Select Active Symptoms</span>
+                </h2>
+                <span id="counter-badge" style="font-size: 0.85rem; font-weight: 700; color: #0284c7;">0 Selected</span>
+            </div>
+
+            <!-- Search & Presets Toolbar -->
+            <div class="toolbar">
+                <div class="search-wrapper">
+                    <svg class="search-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="symptom-search" class="search-input" placeholder="Search 75+ symptoms (e.g. fever, cough, stomach pain, knee)...">
+                </div>
+
+                <div class="presets-wrapper">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #64748b; flex-shrink: 0;">Quick Presets:</span>
+                    <button type="button" class="preset-chip" onclick="applyPreset('cold')">Cold</button>
+                    <button type="button" class="preset-chip" onclick="applyPreset('flu')">Flu</button>
+                    <button type="button" class="preset-chip" onclick="applyPreset('stomach')">Stomach Bug</button>
+                    <button type="button" class="preset-chip" onclick="applyPreset('allergy')">Allergy</button>
+                    <button type="button" class="preset-chip preset-clear-chip" onclick="clearAllSymptoms()">Clear All</button>
+                </div>
+            </div>
+
+            <!-- Categorized Symptoms -->
+            <div id="symptoms-container">
+                
+                <div class="category-group">
+                    <div class="category-title">Respiratory & Throat</div>
+                    <div class="symptom-grid">
+                        <label class="symptom-item"><input type="checkbox" value="fever">Fever</label>
+                        <label class="symptom-item"><input type="checkbox" value="cough">Cough</label>
+                        <label class="symptom-item"><input type="checkbox" value="runny_nose">Runny nose</label>
+                        <label class="symptom-item"><input type="checkbox" value="sore_throat">Sore throat</label>
+                        <label class="symptom-item"><input type="checkbox" value="cold">Common Cold</label>
+                        <label class="symptom-item"><input type="checkbox" value="flu">Flu Symptoms</label>
+                        <label class="symptom-item"><input type="checkbox" value="loss_smell">Loss of smell</label>
+                        <label class="symptom-item"><input type="checkbox" value="loss_taste">Loss of taste</label>
+                        <label class="symptom-item"><input type="checkbox" value="breath_shortness">Short breath</label>
+                        <label class="symptom-item"><input type="checkbox" value="chest_pain">Chest pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="snoring">Snoring</label>
+                        <label class="symptom-item"><input type="checkbox" value="sleep_apnea">Sleep apnea</label>
+                    </div>
+                </div>
+
+                <div class="category-group">
+                    <div class="category-title">Digestive & Stomach</div>
+                    <div class="symptom-grid">
+                        <label class="symptom-item"><input type="checkbox" value="stomach_pain">Stomach pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="nausea">Nausea</label>
+                        <label class="symptom-item"><input type="checkbox" value="vomiting">Vomiting</label>
+                        <label class="symptom-item"><input type="checkbox" value="diarrhea">Diarrhea</label>
+                        <label class="symptom-item"><input type="checkbox" value="constipation">Constipation</label>
+                        <label class="symptom-item"><input type="checkbox" value="acidity">Acidity / Reflux</label>
+                        <label class="symptom-item"><input type="checkbox" value="bloating">Bloating</label>
+                        <label class="symptom-item"><input type="checkbox" value="gas">Excess Gas</label>
+                        <label class="symptom-item"><input type="checkbox" value="dehydration">Dehydration</label>
+                        <label class="symptom-item"><input type="checkbox" value="dry_mouth">Dry mouth</label>
+                    </div>
+                </div>
+
+                <div class="category-group">
+                    <div class="category-title">Cardiovascular & Vital</div>
+                    <div class="symptom-grid">
+                        <label class="symptom-item"><input type="checkbox" value="palpitations">Palpitations</label>
+                        <label class="symptom-item"><input type="checkbox" value="high_bp">High BP</label>
+                        <label class="symptom-item"><input type="checkbox" value="low_bp">Low BP</label>
+                        <label class="symptom-item"><input type="checkbox" value="dizziness">Dizziness</label>
+                        <label class="symptom-item"><input type="checkbox" value="sweating">Excess Sweating</label>
+                        <label class="symptom-item"><input type="checkbox" value="chills">Chills</label>
+                    </div>
+                </div>
+
+                <div class="category-group">
+                    <div class="category-title">Neurological & Mental Health</div>
+                    <div class="symptom-grid">
+                        <label class="symptom-item"><input type="checkbox" value="headache">Headache</label>
+                        <label class="symptom-item"><input type="checkbox" value="anxiety">Anxiety</label>
+                        <label class="symptom-item"><input type="checkbox" value="panic_attack">Panic attack</label>
+                        <label class="symptom-item"><input type="checkbox" value="insomnia">Insomnia</label>
+                        <label class="symptom-item"><input type="checkbox" value="stress">High Stress</label>
+                        <label class="symptom-item"><input type="checkbox" value="depression">Depression</label>
+                        <label class="symptom-item"><input type="checkbox" value="fatigue">Fatigue</label>
+                        <label class="symptom-item"><input type="checkbox" value="weakness">Weakness</label>
+                        <label class="symptom-item"><input type="checkbox" value="tremor">Tremor</label>
+                        <label class="symptom-item"><input type="checkbox" value="numbness">Numbness</label>
+                        <label class="symptom-item"><input type="checkbox" value="confusion">Confusion</label>
+                        <label class="symptom-item"><input type="checkbox" value="loss_balance">Loss of balance</label>
+                    </div>
+                </div>
+
+                <div class="category-group">
+                    <div class="category-title">Musculoskeletal</div>
+                    <div class="symptom-grid">
+                        <label class="symptom-item"><input type="checkbox" value="body_pain">Body pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="joint_pain">Joint pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="muscle_pain">Muscle pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="back_pain">Back pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="neck_pain">Neck pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="knee_pain">Knee pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="shoulder_pain">Shoulder pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="swelling">Swelling</label>
+                    </div>
+                </div>
+
+                <div class="category-group">
+                    <div class="category-title">Skin, Senses & Dental</div>
+                    <div class="symptom-grid">
+                        <label class="symptom-item"><input type="checkbox" value="itching">Itching</label>
+                        <label class="symptom-item"><input type="checkbox" value="rash">Skin rash</label>
+                        <label class="symptom-item"><input type="checkbox" value="dry_skin">Dry skin</label>
+                        <label class="symptom-item"><input type="checkbox" value="hair_loss">Hair loss</label>
+                        <label class="symptom-item"><input type="checkbox" value="eye_redness">Eye redness</label>
+                        <label class="symptom-item"><input type="checkbox" value="eye_pain">Eye pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="blurred_vision">Blurred vision</label>
+                        <label class="symptom-item"><input type="checkbox" value="ear_pain">Ear pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="tooth_pain">Tooth pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="jaundice">Jaundice</label>
+                    </div>
+                </div>
+
+                <div class="category-group">
+                    <div class="category-title">Urinary & Systemic</div>
+                    <div class="symptom-grid">
+                        <label class="symptom-item"><input type="checkbox" value="burning_urination">Burning urination</label>
+                        <label class="symptom-item"><input type="checkbox" value="frequent_urination">Frequent urination</label>
+                        <label class="symptom-item"><input type="checkbox" value="pelvic_pain">Pelvic pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="kidney_pain">Kidney pain</label>
+                        <label class="symptom-item"><input type="checkbox" value="weight_loss">Weight loss</label>
+                        <label class="symptom-item"><input type="checkbox" value="weight_gain">Weight gain</label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Analyze Trigger Button -->
+            <button class="btn btn-primary btn-block" onclick="calculateDisease()" style="padding: 0.95rem; font-size: 1.05rem; margin-top: 1.25rem;">
+                Analyze Symptoms & Suggest Condition
+            </button>
+        </div>
+
+        <!-- 3. Diagnostic Result Card -->
+        <div id="result-card" class="card">
+            <div style="text-align: center; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+                <div id="severity-badge" class="severity-badge sev-low">Low Risk Evaluation</div>
+                <h2 id="disease-name" class="result-title">Condition Match</h2>
+
+                <div style="max-width: 360px; margin: 0 auto;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 700; color: #64748b;">
+                        <span>Correlation Confidence</span>
+                        <span id="score-percentage">85% Match</span>
+                    </div>
+                    <div class="meter-track">
+                        <div id="match-score" class="meter-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1rem;">
+                <div class="guidance-block block-med">
+                    <h4>Suggested Over-the-Counter Care:</h4>
+                    <p id="medicine-name" style="font-size: 0.9rem; color: #0f172a;">--</p>
+                </div>
+
+                <div class="guidance-block block-diet">
+                    <h4>Nutritional & Hydration Support:</h4>
+                    <p id="diet-advice" style="font-size: 0.9rem; color: #0f172a;">--</p>
+                </div>
+
+                <div class="guidance-block block-warn">
+                    <h4>When to Consult a Doctor Immediately:</h4>
+                    <p id="warning-advice" style="font-size: 0.9rem;">--</p>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 1rem;">
+                <button class="btn btn-secondary" onclick="window.print()">
+                    Print / Save Summary
+                </button>
+                <button class="btn btn-primary" onclick="clearAllSymptoms()">
+                    Start New Check
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>
+                <strong>MediCalc AI</strong> &copy; 2026 • Health Awareness Utility
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="home.html">Home</a>
+                <a href="index.html">Symptoms</a>
+                <a href="bmi.html">BMI</a>
+                <a href="dashboard.html">Dashboard</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INLINE SCRIPT ENGINE (Guaranteed to execute reliably) -->
     <script>
-        // 1. Mobile Navbar Toggle
-        const mobileMenu = document.getElementById('mobile-menu');
-        const navLinks = document.querySelector('.nav-links');
+        // 1. Mobile Menu Toggle
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        if (mobileToggle && navMenu) {
+            mobileToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navMenu.classList.toggle('open');
+                mobileToggle.innerText = navMenu.classList.contains('open') ? 'Close' : 'Menu';
+            });
+            document.addEventListener('click', (e) => {
+                if (!navMenu.contains(e.target) && !mobileToggle.contains(e.target)) {
+                    navMenu.classList.remove('open');
+                    mobileToggle.innerText = 'Menu';
+                }
+            });
+        }
 
-        mobileMenu.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
+        // 2. Active User Check
+        const activeUser = sessionStorage.getItem('activeUser');
+        const authSlot = document.getElementById('auth-slot');
+        if (activeUser && authSlot) {
+            authSlot.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <a href="dashboard.html" style="font-size: 0.85rem; font-weight: 700; background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 9999px;">
+                        ${activeUser}
+                    </a>
+                </div>
+            `;
+        }
+
+        // 3. Symptoms Counter
+        function updateCounter() {
+            const count = document.querySelectorAll(".symptom-item input:checked").length;
+            const counter = document.getElementById("counter-badge");
+            if (counter) counter.innerText = `${count} Selected`;
+        }
+
+        document.querySelectorAll(".symptom-item input").forEach(cb => {
+            cb.addEventListener('change', updateCounter);
         });
 
-        // 2. Age Calculator Logic
-        document.getElementById('calculateBtn').addEventListener('click', function() {
-            const dateInput = document.getElementById('date-input').value;
-            
-            if (!dateInput) {
-                alert("Please select a birth date first!");
+        // 4. Search Filter
+        document.getElementById("symptom-search").addEventListener("input", function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const items = document.querySelectorAll(".symptom-item");
+            const groups = document.querySelectorAll(".category-group");
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(query) ? "flex" : "none";
+            });
+
+            groups.forEach(group => {
+                const visible = group.querySelectorAll('.symptom-item:not([style*="display: none"])').length;
+                group.style.display = visible === 0 ? "none" : "block";
+            });
+        });
+
+        // 5. Presets
+        function applyPreset(type) {
+            document.querySelectorAll(".symptom-item input").forEach(cb => cb.checked = false);
+            const presets = {
+                cold: ["runny_nose", "sore_throat", "cough", "cold"],
+                flu: ["fever", "cough", "chills", "body_pain", "fatigue"],
+                stomach: ["stomach_pain", "nausea", "vomiting", "diarrhea"],
+                allergy: ["itching", "rash", "runny_nose", "eye_redness"]
+            };
+            const list = presets[type] || [];
+            list.forEach(val => {
+                const cb = document.querySelector(`.symptom-item input[value="${val}"]`);
+                if (cb) cb.checked = true;
+            });
+            updateCounter();
+        }
+
+        function clearAllSymptoms() {
+            document.querySelectorAll(".symptom-item input").forEach(cb => cb.checked = false);
+            updateCounter();
+            const card = document.getElementById("result-card");
+            if (card) card.style.display = "none";
+        }
+
+        // 6. Age Calculation
+        document.getElementById('calcAgeBtn').addEventListener('click', function() {
+            const dateVal = document.getElementById('date-input').value;
+            if (!dateVal) {
+                alert("Please pick a birth date first.");
                 return;
             }
-
-            const birthDate = new Date(dateInput);
+            const birthDate = new Date(dateVal);
             const today = new Date();
+
+            if (birthDate > today) {
+                alert("Birth date cannot be in the future.");
+                return;
+            }
 
             let years = today.getFullYear() - birthDate.getFullYear();
             let months = today.getMonth() - birthDate.getMonth();
@@ -497,27 +973,196 @@
 
             if (days < 0) {
                 months--;
-                // Get days in the previous month
                 const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
                 days += lastMonth.getDate();
             }
-
             if (months < 0) {
                 years--;
                 months += 12;
             }
 
-            // Update the UI with a cool counting animation effect (optional, but looks nice)
+            const currentYear = today.getFullYear();
+            let nextBday = new Date(currentYear, birthDate.getMonth(), birthDate.getDate());
+            if (nextBday < today) {
+                nextBday = new Date(currentYear + 1, birthDate.getMonth(), birthDate.getDate());
+            }
+            const diffDays = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
+
             document.getElementById('years').innerText = years;
             document.getElementById('months').innerText = months;
             document.getElementById('days').innerText = days;
+            document.getElementById('next-birthday').innerText = `${diffDays}d`;
         });
 
-        // 3. Placeholder for your Disease Calculator Logic
-        
+        // 7. Clinical Symptoms Analysis
+        function calculateDisease() {
+            const selected = Array.from(document.querySelectorAll(".symptom-item input:checked")).map(cb => cb.value);
+
+            if (selected.length === 0) {
+                alert("Please select at least one symptom to evaluate.");
+                return;
+            }
+
+            let res = {
+                name: "General Fatigue & Malaise",
+                severity: "sev-low",
+                severityText: "Low Risk • Rest & Monitor",
+                confidence: 65,
+                medicine: "Multivitamins, adequate hydration, electrolyte fluids, and 8 hours of sleep.",
+                diet: "Fresh citrus fruits, light soups, leafy green vegetables, and minimum 2.5L water daily.",
+                warning: "If exhaustion persists for more than 7 days, consult a physician."
+            };
+
+            // High Urgency
+            if (selected.includes("breath_shortness") && selected.includes("chest_pain")) {
+                res = {
+                    name: "Acute Cardiorespiratory Concern",
+                    severity: "sev-danger",
+                    severityText: "High Urgency • Seek Medical Attention",
+                    confidence: 90,
+                    medicine: "Do not attempt self-medication. Rest in an upright seated position.",
+                    diet: "Sip water only if fully conscious. Avoid solid heavy meals.",
+                    warning: "Chest tightness radiating to jaw or arm, severe breathlessness, or dizziness requires IMMEDIATE medical care."
+                };
+            }
+            // COVID / Respiratory
+            else if ((selected.includes("loss_smell") || selected.includes("loss_taste")) && (selected.includes("fever") || selected.includes("cough"))) {
+                res = {
+                    name: "Probable Viral Respiratory Infection (e.g. COVID-19 / Flu)",
+                    severity: "sev-warning",
+                    severityText: "Moderate Attention • Monitor Vitals",
+                    confidence: 88,
+                    medicine: "Paracetamol (for fever/aches), Vitamin C, Zinc, saline nasal rinse.",
+                    diet: "High-protein warm broth, herbal tea with honey and ginger, steamed vegetables.",
+                    warning: "Check oxygen saturation (SpO2). If SpO2 drops below 94% or breath shortness develops, visit a clinic."
+                };
+            }
+            // Flu
+            else if (selected.includes("fever") && (selected.includes("cough") || selected.includes("chills") || selected.includes("body_pain"))) {
+                res = {
+                    name: "Influenza (Flu) / Upper Respiratory Infection",
+                    severity: "sev-warning",
+                    severityText: "Moderate Attention • Symptomatic Relief",
+                    confidence: 85,
+                    medicine: "Paracetamol for fever/chills, steam inhalation with eucalyptus, saline gargles.",
+                    diet: "Warm chicken/vegetable soup, hot herbal infusions, hydrating fluids.",
+                    warning: "Consult a doctor if fever (>102°F) persists past 3 days or breathing becomes labored."
+                };
+            }
+            // Cold
+            else if (selected.includes("runny_nose") || selected.includes("sore_throat") || selected.includes("cold")) {
+                res = {
+                    name: "Common Cold (Acute Rhinitis)",
+                    severity: "sev-low",
+                    severityText: "Mild • Home Recovery",
+                    confidence: 80,
+                    medicine: "OTC decongestants, throat lozenges, warm saline water gargles twice daily.",
+                    diet: "Warm liquids, ginger tea, vitamin C rich fruits, honey.",
+                    warning: "Usually resolves within 5-7 days. Consult doctor if high fever develops."
+                };
+            }
+            // Stomach / Food Poisoning
+            else if ((selected.includes("stomach_pain") || selected.includes("nausea")) && (selected.includes("diarrhea") || selected.includes("vomiting"))) {
+                res = {
+                    name: "Acute Gastroenteritis (Food Poisoning / Stomach Bug)",
+                    severity: "sev-warning",
+                    severityText: "Moderate Attention • Critical Hydration",
+                    confidence: 86,
+                    medicine: "Oral Rehydration Salts (ORS), Probiotics, Zinc supplements.",
+                    diet: "BRAT diet (Bananas, Rice, Applesauce, Toast), curd/yogurt, tender coconut water.",
+                    warning: "Seek urgent care if you observe blood in stool, persistent vomiting exceeding 24h, or signs of severe dehydration."
+                };
+            }
+            // Acidity / GERD
+            else if (selected.includes("acidity") || (selected.includes("gas") && selected.includes("bloating"))) {
+                res = {
+                    name: "Hyperacidity & Reflux (GERD)",
+                    severity: "sev-low",
+                    severityText: "Mild • Dietary Management",
+                    confidence: 82,
+                    medicine: "OTC Antacids (Gelusil / Digene) or H2 blockers (Famotidine) before meals.",
+                    diet: "Small frequent meals, cold milk, oatmeal. Strictly avoid spicy/oily food and soda.",
+                    warning: "If burning pain radiates to your back or throat with cold sweating, evaluate for cardiac issues."
+                };
+            }
+            // Hypertension
+            else if (selected.includes("palpitations") || selected.includes("high_bp")) {
+                res = {
+                    name: "Cardiovascular Strain / High BP",
+                    severity: "sev-warning",
+                    severityText: "Moderate Attention • Monitor BP",
+                    confidence: 80,
+                    medicine: "Do not stop or adjust prescribed BP drugs without consultation. Practice slow breathing.",
+                    diet: "DASH diet protocol: strictly low sodium (<2g/day), potassium-rich foods (bananas).",
+                    warning: "Check BP with a digital cuff. Readings consistently exceeding 140/90 mmHg warrant clinical assessment."
+                };
+            }
+            // UTI
+            else if (selected.includes("burning_urination") || selected.includes("frequent_urination")) {
+                res = {
+                    name: "Probable Urinary Tract Infection (UTI)",
+                    severity: "sev-warning",
+                    severityText: "Moderate Attention • Antibiotic Check",
+                    confidence: 84,
+                    medicine: "Urinary alkalinizer (Citrate solution), OTC analgesics for pelvic spasm.",
+                    diet: "Increase water consumption to 3-4 liters daily, fresh unsweetened cranberry juice.",
+                    warning: "Most UTIs require a doctor-prescribed antibiotic course. Seek treatment if fever or flank pain develops."
+                };
+            }
+            // Allergy
+            else if (selected.includes("itching") || selected.includes("rash")) {
+                res = {
+                    name: "Allergic Dermatitis / Skin Reaction",
+                    severity: "sev-low",
+                    severityText: "Mild • Antihistamine Care",
+                    confidence: 80,
+                    medicine: "OTC Antihistamines (Cetirizine / Loratadine), calamine lotion.",
+                    diet: "Anti-inflammatory diet. Avoid known personal allergen triggers.",
+                    warning: "If rash is accompanied by facial swelling or throat tightness, seek EMERGENCY care (Anaphylaxis)."
+                };
+            }
+            // Stress / Anxiety
+            else if (selected.includes("anxiety") || selected.includes("panic_attack") || selected.includes("insomnia")) {
+                res = {
+                    name: "Acute Stress / Sleep Disruption",
+                    severity: "sev-low",
+                    severityText: "Lifestyle & Wellbeing",
+                    confidence: 78,
+                    medicine: "Chamomile tea, magnesium glycinate supplement, guided mindfulness meditation.",
+                    diet: "Complex carbohydrates, warm milk with nutmeg, avoid caffeine after 2 PM.",
+                    warning: "Consult a counselor if anxiety impairs daily functioning or persists for weeks."
+                };
+            }
+            // Joint / Muscle pain
+            else if (selected.includes("joint_pain") || selected.includes("muscle_pain") || selected.includes("back_pain")) {
+                res = {
+                    name: "Musculoskeletal Strain",
+                    severity: "sev-low",
+                    severityText: "Mild • Rest & Physical Therapy",
+                    confidence: 76,
+                    medicine: "Topical pain relief gel, hot/cold compress alternating every 20 minutes.",
+                    diet: "Turmeric milk (Curcumin), adequate hydration.",
+                    warning: "Consult an orthopedic specialist if joint swelling is hot or pain radiates down legs."
+                };
+            }
+
+            const card = document.getElementById("result-card");
+            document.getElementById("disease-name").innerText = res.name;
+            document.getElementById("medicine-name").innerText = res.medicine;
+            document.getElementById("diet-advice").innerText = res.diet;
+            document.getElementById("warning-advice").innerText = res.warning;
+
+            const badge = document.getElementById("severity-badge");
+            badge.className = `severity-badge ${res.severity}`;
+            badge.innerText = res.severityText;
+
+            const score = Math.min(95, res.confidence + Math.min(8, selected.length * 2));
+            document.getElementById("match-score").style.width = `${score}%`;
+            document.getElementById("score-percentage").innerText = `${score}% Match`;
+
+            card.style.display = "block";
+            card.scrollIntoView({ behavior: "smooth" });
+        }
     </script>
-
-    <script src="calculator.js"></script>
-
 </body>
 </html>

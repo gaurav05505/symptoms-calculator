@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=sample.html">
+    <title>Redirecting to Login...</title>
+    <script>
+        sessionStorage.removeItem("activeUser");
+        window.location.href = "sample.html";
+    </script>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding-top: 50px;">
+    <p>Logging out and redirecting to login...</p>
+    <p><a href="sample.html">Click here if not redirected automatically.</a></p>
+</body>
+</html>

@@ -3,166 +3,586 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home | kpTech Calc</title>
-    <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
-
+    <title>MediCalc AI | Intelligent Health & Symptoms Platform</title>
     <style>
-        /* Shared variables from your main app */
-        :root {
-            --primary-color: #0ea5e9;
-            --primary-hover: #0284c7;
-            --secondary-color: #38bdf8;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-        }
-
-        * {
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* NAVBAR (Identical to your main app) */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 40px;
-            background: #1e293b;
-            color: white;
+        a {
+            color: #0284c7;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            color: #0369a1;
+        }
+
+        /* --- NAVBAR --- */
+        .site-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
             position: sticky;
             top: 0;
             z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
 
-        .nav-logo {
-            font-size: 22px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .nav-links {
-            list-style: none;
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 64px;
             display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .nav-links a {
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #0f172a;
             text-decoration: none;
+        }
+
+        .brand-icon-box {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: #0284c7;
             color: white;
-            padding: 10px 15px;
-            display: block;
-            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .nav-links a:hover {
-            background: var(--primary-color);
-            border-radius: 4px;
+        .brand-logo span {
+            color: #0284c7;
         }
 
-        /* HERO SECTION */
-        .hero-container {
-            max-width: 900px;
-            margin: 60px auto;
-            padding: 40px;
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #0284c7;
+            background: #f0f9ff;
+        }
+
+        .btn-auth-nav {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            background: #0284c7;
+            color: #ffffff !important;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2);
+            transition: all 0.2s;
+        }
+
+        .btn-auth-nav:hover {
+            background: #0369a1;
+            transform: translateY(-1px);
+        }
+
+        .mobile-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            font-size: 1.2rem;
+            color: #0f172a;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- HERO --- */
+        .main-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2.5rem 1rem 4rem 1rem;
+        }
+
+        .hero-section {
             text-align: center;
-            border: 1px solid var(--border-color);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: clamp(1.5rem, 4vw, 3rem) 0;
         }
 
-        .hero-container h1 {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            color: #0284c7;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
         }
 
-        .hero-container h1 span {
-            color: var(--text-main);
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.25rem);
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+            margin-bottom: 1rem;
         }
 
-        .mission-text {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            line-height: 1.8;
-            margin-bottom: 30px;
-            padding: 0 20px;
+        .hero-title span {
+            color: #0284c7;
         }
 
-        .highlight-box {
-            background: #e0f2fe;
-            border-left: 5px solid var(--primary-color);
-            padding: 20px;
-            margin: 30px 0;
-            text-align: left;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .highlight-box h3 {
-            color: var(--primary-hover);
-            margin-bottom: 10px;
-        }
-
-        .highlight-box p {
-            color: var(--text-main);
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.15rem);
+            color: #475569;
             line-height: 1.6;
+            margin-bottom: 2rem;
         }
 
-        .cta-btn {
-            display: inline-block;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: white;
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-            border-radius: 30px;
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 0.75rem 1.4rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
             text-decoration: none;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
         }
 
-        .cta-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);
+        .btn-primary {
+            background: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #0369a1;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #0284c7;
+            color: #0284c7;
+        }
+
+        .trust-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            padding: 12px;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* --- FEATURES GRID --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin: 3rem 0;
+        }
+
+        .feature-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+        }
+
+        .feature-box:hover {
+            border-color: #0284c7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .feature-icon-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: #f0f9ff;
+            color: #0284c7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-heading {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: #475569;
+            line-height: 1.55;
+            flex-grow: 1;
+        }
+
+        /* --- HOW IT WORKS --- */
+        .section-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .step-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+
+        .step-num {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #0284c7;
+            background: #f0f9ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .step-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            font-size: 0.88rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .disclaimer-card {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-left: 4px solid #0284c7;
+            border-radius: 8px;
+            padding: 1.25rem;
+            font-size: 0.88rem;
+            color: #0369a1;
+            line-height: 1.55;
+        }
+
+        /* --- FOOTER --- */
+        .site-footer {
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.5rem 1rem;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-btn { display: flex; }
+            .nav-menu {
+                position: fixed;
+                top: 64px; left: 0; right: 0;
+                background: #ffffff;
+                border-bottom: 1px solid #e2e8f0;
+                flex-direction: column;
+                padding: 1rem; gap: 6px;
+                display: none;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            }
+            .nav-menu.open { display: flex; }
+            .nav-link { width: 100%; padding: 10px 12px; }
+            .hero-actions .btn { width: 100%; }
+            .footer-inner { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="nav-logo">kpTech Calc</div>
-        <ul class="nav-links">
-            <li><a href="home.html">Home</a></li>
-            <li><a href="index.html">Dashboard</a></li>
-            <li><a href="index.html">Symptoms Checker</a></li>
-        </ul>
-    </nav>
+    <!-- Unified Clean Navbar -->
+    <header class="site-header">
+        <div class="nav-container">
+            <a href="home.html" class="brand-logo">
+                <div class="brand-icon-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/>
+                        <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/>
+                        <circle cx="20" cy="10" r="2"/>
+                    </svg>
+                </div>
+                <div>MediCalc <span>AI</span></div>
+            </a>
 
-    <div class="hero-container">
-        <h1>Welcome to <span>kpTech Calc</span></h1>
+            <nav>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="home.html" class="nav-link active">Home</a></li>
+                    <li><a href="index.html" class="nav-link">Symptoms Checker</a></li>
+                    <li><a href="bmi.html" class="nav-link">BMI Calculator</a></li>
+                    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                </ul>
+            </nav>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div id="auth-slot">
+                    <a href="sample.html" class="btn-auth-nav">Sign In &rarr;</a>
+                </div>
+                <button class="mobile-btn" id="mobile-toggle" aria-label="Toggle navigation">Menu</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
         
-        <p class="mission-text">
-            Bridging the gap between sudden symptoms and accessible healthcare information. We built this platform to empower individuals to make informed decisions about their health quickly and securely.
-        </p>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                <span>Instant Clinical Health Tools</span>
+            </div>
 
-        <div class="highlight-box">
-            <h3>Our Mission</h3>
-            <p>
-                Developed as a live symptoms calculator and disease predictor, this tool was engineered to provide instant, algorithmic analysis of common medical symptoms. Proudly built by a students of KCC Institute,("krishna prasad rath") and ("abhishek mishra") and ("vedant chauhan") this hackathon project demonstrates how clean code and logic can provide immediate value by suggesting over-the-counter remedies and identifying when it is time to consult a medical professional.
+            <h1 class="hero-title">
+                Smart Symptom Checking & <span>Health Insights</span>
+            </h1>
+
+            <p class="hero-subtitle">
+                Quickly evaluate active bodily symptoms, compute exact BMI target categories, and receive instant OTC relief and dietary recommendations.
             </p>
+
+            <div class="hero-actions">
+                <a href="index.html" class="btn btn-primary">
+                    <span>Check Symptoms Now</span>
+                    <span>&rarr;</span>
+                </a>
+                <a href="bmi.html" class="btn btn-secondary">
+                    <span>Calculate BMI</span>
+                </a>
+            </div>
+
+            <div class="trust-row">
+                <div>100% Client-Side Privacy</div>
+                <div>Instant Algorithmic Match</div>
+                <div>75+ Symptom Indicators</div>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section class="features-grid">
+            <div class="feature-box">
+                <div class="feature-icon-circle">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                </div>
+                <h3 class="feature-heading">Symptom Checker</h3>
+                <p class="feature-desc">
+                    Search through 75+ categorized symptoms with quick presets. Matches combinations with probable conditions, OTC suggestions, and dietary plans.
+                </p>
+                <a href="index.html" style="font-weight: 700; font-size: 0.9rem; margin-top: auto;">Open Symptom Checker &rarr;</a>
+            </div>
+
+            <div class="feature-box">
+                <div class="feature-icon-circle">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                </div>
+                <h3 class="feature-heading">Precision BMI Gauge</h3>
+                <p class="feature-desc">
+                    Calculate Body Mass Index using Metric (cm/kg) or Imperial (ft/in/lbs) units. View your exact placement on the visual clinical spectrum bar.
+                </p>
+                <a href="bmi.html" style="font-weight: 700; font-size: 0.9rem; margin-top: auto;">Calculate Your BMI &rarr;</a>
+            </div>
+
+            <div class="feature-box">
+                <div class="feature-icon-circle">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </div>
+                <h3 class="feature-heading">Patient Age Tool</h3>
+                <p class="feature-desc">
+                    Accurately determine exact patient age from date of birth down to years, months, and days with a milestone countdown to their next birthday.
+                </p>
+                <a href="index.html" style="font-weight: 700; font-size: 0.9rem; margin-top: auto;">Calculate Patient Age &rarr;</a>
+            </div>
+        </section>
+
+        <!-- How it works -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">How It Works</h2>
+                <p style="color: #64748b; font-size: 0.92rem;">Three simple steps to health awareness</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <span class="step-num">STEP 01</span>
+                    <h4 class="step-title">Select Symptoms</h4>
+                    <p class="step-desc">Pick what you are feeling using our live search filter or one-click preset categories.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">STEP 02</span>
+                    <h4 class="step-title">Algorithmic Match</h4>
+                    <p class="step-desc">Our diagnostic engine correlates symptoms to identify potential conditions and gauge severity.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">STEP 03</span>
+                    <h4 class="step-title">Actionable Guidance</h4>
+                    <p class="step-desc">Receive suggested OTC care, hydration targets, and red-flag physician consultation alerts.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer-card">
+            <strong>Medical Notice:</strong> MediCalc AI is intended for informational and educational awareness only. It is not a clinical medical prescription or formal diagnosis. If you experience severe chest pain, shortness of breath, or emergency symptoms, contact local emergency healthcare immediately.
         </div>
 
-        <a href="index.html" class="cta-btn">Launch Calculator</a>
-    </div>
+    </main>
 
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>
+                <strong>MediCalc AI</strong> &copy; 2026 • Health Awareness Platform
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="home.html">Home</a>
+                <a href="index.html">Symptoms</a>
+                <a href="bmi.html">BMI</a>
+                <a href="dashboard.html">Dashboard</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        if (mobileToggle && navMenu) {
+            mobileToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navMenu.classList.toggle('open');
+                mobileToggle.innerText = navMenu.classList.contains('open') ? 'Close' : 'Menu';
+            });
+            document.addEventListener('click', (e) => {
+                if (!navMenu.contains(e.target) && !mobileToggle.contains(e.target)) {
+                    navMenu.classList.remove('open');
+                    mobileToggle.innerText = 'Menu';
+                }
+            });
+        }
+
+        // Active Session Check
+        const activeUser = sessionStorage.getItem('activeUser');
+        const authSlot = document.getElementById('auth-slot');
+        if (activeUser && authSlot) {
+            authSlot.innerHTML = `
+                <a href="dashboard.html" style="font-size: 0.85rem; font-weight: 700; background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 9999px;">
+                    ${activeUser}
+                </a>
+            `;
+        }
+    </script>
 </body>
 </html>

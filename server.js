@@ -1,19 +1,32 @@
 const express = require('express');
 const fs = require('fs');
+const path = require('path');
 const crypto = require('crypto');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3005;
+const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3005;
 
 app.use(express.json());
 app.use(cors());
 
+// Serve static frontend files with automatic .html extension resolution
+app.use(express.static(__dirname, { extensions: ['html'] }));
+
+// Health check endpoint
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
-const FILE_PATH = './users.json';
+// Clean friendly routes for all pages
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'home.html')));
+app.get('/home', (req, res) => res.sendFile(path.join(__dirname, 'home.html')));
+app.get('/bmi', (req, res) => res.sendFile(path.join(__dirname, 'bmi.html')));
+app.get('/symptoms', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'sample.html')));
+
+const FILE_PATH = path.join(__dirname, 'users.json');
 
 const hashPassword = (password, salt = crypto.randomBytes(16).toString('hex')) => ({
     salt,
@@ -29,11 +42,11 @@ const verifyPassword = (password, stored) => {
 // Helper function to safely read the JSON file
 const readUsers = () => {
     if (!fs.existsSync(FILE_PATH)) {
-        fs.writeFileSync(FILE_PATH, JSON.stringify({})); // Creates file if missing
+        fs.writeFileSync(FILE_PATH, JSON.stringify({}));
         return {};
     }
     try {
-        const data = fs.readFileSync(FILE_PATH);
+        const data = fs.readFileSync(FILE_PATH, 'utf8');
         return JSON.parse(data);
     } catch (err) {
         return {};
@@ -42,8 +55,11 @@ const readUsers = () => {
 
 // Route: Register
 app.post('/register', (req, res) => {
-    console.log(`➡️ New Registration Attempt: ${req.body.username}`);
+    console.log(`New Registration Attempt: ${req.body.username}`);
     const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+    }
     const users = readUsers();
 
     if (users[username]) {
@@ -57,8 +73,11 @@ app.post('/register', (req, res) => {
 
 // Route: Login
 app.post('/login', (req, res) => {
-    console.log(`➡️ Login Attempt: ${req.body.username}`);
+    console.log(`Login Attempt: ${req.body.username}`);
     const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+    }
     const users = readUsers();
 
     if (verifyPassword(password, users[username])) {
@@ -68,16 +87,26 @@ app.post('/login', (req, res) => {
     }
 });
 
-// Start the server with a built-in error catcher
-const server = app.listen(PORT, () => {
-    console.log(`\n=========================================`);
-    console.log(`✅ SERVER IS ALIVE AND RUNNING ON PORT ${PORT}`);
-    console.log(`⏳ Waiting for webpage to connect...`);
-    console.log(`=========================================\n`);
-});
+// Function to start server with automatic port retry if port is busy
+function startServer(port) {
+    const server = app.listen(port, () => {
+        console.log(`\n=========================================`);
+        console.log(`SERVER IS ALIVE AND RUNNING ON PORT ${port}`);
+        console.log(`Open in your browser: http://localhost:${port}`);
+        console.log(`Symptoms Checker:    http://localhost:${port}/symptoms`);
+        console.log(`BMI Calculator:       http://localhost:${port}/bmi`);
+        console.log(`=========================================\n`);
+    });
 
-// If anything tries to crash the server, this will catch it and print it!
-server.on('error', (err) => {
-    console.error('\n❌ FATAL ERROR CAUGHT:');
-    console.error(err);
-});
+    server.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+            console.log(`Port ${port} is in use, trying port ${port + 1}...`);
+            startServer(port + 1);
+        } else {
+            console.error('\nFATAL ERROR CAUGHT:');
+            console.error(err);
+        }
+    });
+}
+
+startServer(DEFAULT_PORT);
